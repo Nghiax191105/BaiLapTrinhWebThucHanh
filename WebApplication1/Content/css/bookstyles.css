@@ -1,0 +1,267 @@
+﻿/* Đổi màu nền cho toàn bộ body của trang */
+body {
+    background-color: #f8f5f0 !important; /* Màu be nhạt */
+}
+
+/* Đổi màu nền cho phần chính */
+.main-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+}
+
+/* Đổi màu cho sidebar danh mục */
+.filter-sidebar {
+    background-color: #f8f9fa; /* Màu xám nhạt */
+    border-radius: 8px;
+    padding: 15px;
+}
+/* Container chính */
+.filter-section, .sort-section, .book-container {
+    margin-bottom: 20px;
+}
+
+/* Filter Section */
+.filter-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+    /* Filter Input Styles */
+    .filter-section .form-label {
+        font-weight: bold;
+    }
+
+    .filter-section .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .filter-section .btn-outline-secondary {
+        border-color: #6c757d;
+        color: #6c757d;
+    }
+
+        .filter-section .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+/* Sort Section */
+.sort-section {
+    text-align: right;
+    font-weight: bold;
+}
+
+    .sort-section .btn-outline-primary {
+        color: #007bff;
+        border-color: #007bff;
+        margin-left: 5px;
+    }
+
+        .sort-section .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+/* Book Container */
+.book-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.book-item {
+    width: 200px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%; /* Đặt chiều cao 100% để thẻ có kích thước cố định */
+}
+
+    .book-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+/* Book Image */
+.book-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Book Title Link */
+.book-title-link {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+    text-decoration: none;
+    text-align: center;
+    height: 2.6em; /* Chiều cao cố định đủ cho 2 dòng chữ */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Hiển thị tối đa 2 dòng */
+    -webkit-box-orient: vertical;
+}
+
+    .book-title-link:hover {
+        color: #007bff;
+    }
+
+/* Book Price */
+.book-price {
+    font-size: 1.1em;
+    color: #28a745;
+    margin-top: auto; /* Đẩy giá xuống dưới */
+    margin-bottom: 10px; /* Khoảng cách giữa giá và các nút */
+}
+
+/* Action Buttons (Nằm ngang và căn giữa) */
+.action-buttons {
+    display: flex;
+    gap: 5px; /* Khoảng cách giữa các nút */
+    justify-content: center;
+    width: 100%;
+}
+
+    .action-buttons .btn {
+        flex: 1; /* Đảm bảo các nút có kích thước bằng nhau */
+        padding: 5px 0; /* Điều chỉnh padding trên và dưới */
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+    /* Định dạng riêng cho các nút */
+    .action-buttons .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: #fff;
+    }
+
+    .action-buttons .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+    }
+
+    .action-buttons .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+    }
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+    .pagination li a,
+    .pagination li span {
+        color: #007bff;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        line-height: 35px;
+        text-align: center;
+        display: inline-block;
+        margin: 0 5px;
+    }
+
+    .pagination li.active span {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .pagination li a:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+/* Carousel Styles */
+.carousel-cell {
+    width: 25%; /* Chia đều 4 cuốn sách trên một hàng */
+    padding: 10px;
+}
+
+.carousel img {
+    border-radius: 5px;
+}
+
+.carousel-inner {
+    transition: transform 0.5s ease-in-out;
+}
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.list-group-item.active {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+
+
+.carousel-cell {
+    transition: opacity 0.3s ease;
+}
+
+/* Tùy chỉnh nút prev/next của Flickity */
+.flickity-button {
+    background: rgba(255,255,255,0.9);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+}
+
+    .flickity-button:hover {
+        background: white;
+    }
+
+.flickity-prev-next-button {
+    width: 44px;
+    height: 44px;
+}
+
+.flickity-page-dots {
+    bottom: 20px;
+}
+
+    .flickity-page-dots .dot {
+        width: 12px;
+        height: 12px;
+        opacity: 1;
+        background: rgba(255,255,255,0.5);
+    }
+
+        .flickity-page-dots .dot.is-selected {
+            background: white;
+        }
+
+.grid {
+    display: flex;
+    gap: 185px; /* Khoảng cách giữa các hình ảnh */
+}
+
+    .grid img {
+        max-width: 100px; /* Điều chỉnh kích thước hình ảnh */
+        height: auto; /* Đảm bảo hình ảnh giữ đúng tỷ lệ */
+        justify-content: space-around
+    }

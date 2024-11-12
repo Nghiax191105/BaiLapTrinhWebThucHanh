@@ -1,0 +1,89 @@
+﻿@model WebApplication1.Models.Order
+
+@{
+    ViewBag.Title = "OrderConfirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-success">
+                <h4>Cảm ơn bạn đã đặt hàng!</h4>
+                <p>Mã đơn hàng của bạn là: #@Model.OrderID</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Chi tiết đơn hàng</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p>
+                                <strong>Ngày đặt:</strong> @(Model.OrderDate.HasValue ? Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A") </p>
+                            <p>
+                                <strong>Trạng thái:</strong>
+                                @switch (Model.Status)
+                                {
+                                    case "Pending":
+                                        <span class="badge badge-warning">Chờ xử lý</span>
+                                        break;
+                                    case "Shipped":
+                                        <span class="badge badge-info">Đang giao</span>
+                                        break;
+                                    case "Completed":
+                                        <span class="badge badge-success">Hoàn thành</span>
+                                        break;
+                                    case "Cancelled":
+                                        <span class="badge badge-danger">Đã hủy</span>
+                                        break;
+                                    default:
+                                        <span class="badge badge-secondary">Không xác định</span>
+                                        break;
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Địa chỉ giao hàng:</strong></p>
+                            <p>@Model.ShippingAddress</p>
+                        </div>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderDetails)
+                            {
+                                <tr>
+                                    <td>@item.Book.Title</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Price.ToString("N0") đ</td>
+                                    <td>@((item.Price * item.Quantity).ToString("N0")) đ</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-right"><strong>Tổng cộng:</strong></td>
+                                <td><strong>@Model.TotalAmount.ToString("N0") đ</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                @Html.ActionLink("Xem lịch sử đơn hàng", "Index", "Orders", null, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Tiếp tục mua sắm", "Index", "Books", null, new { @class = "btn btn-success" })
+            </div>
+        </div>
+    </div>
+</div>

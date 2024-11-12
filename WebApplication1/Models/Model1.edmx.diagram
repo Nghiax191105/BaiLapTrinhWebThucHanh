@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ec989da846a144d2a97534aab0f6d22f" Name="Diagram1">
+        <EntityTypeShape EntityType="DefaultConnectionModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.AspNetRole" Width="1.5" PointX="1.125" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.AspNetUserClaim" Width="1.5" PointX="3.125" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.AspNetUserLogin" Width="1.5" PointX="10.125" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.AspNetUser" Width="1.5" PointX="5.5" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.Book" Width="1.5" PointX="7.75" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.Cart" Width="1.5" PointX="7.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.CartDetail" Width="1.5" PointX="10.375" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.Category" Width="1.5" PointX="10.375" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.OrderDetail" Width="1.5" PointX="5.375" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.Order" Width="1.5" PointX="2.875" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DefaultConnectionModel.Payment" Width="1.5" PointX="0.625" PointY="5.5" IsExpanded="true" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_Cart_UserID" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_Orders_UserID" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_Books_CategoryID" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_CartDetails_BookID" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_OrderDetails_BookID" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_CartDetails_CartID" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_OrderDetails_OrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.FK_Payments_OrderID" ManuallyRouted="false" />
+        <AssociationConnector Association="DefaultConnectionModel.AspNetUserRoles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

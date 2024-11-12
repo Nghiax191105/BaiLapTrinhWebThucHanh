@@ -1,0 +1,53 @@
+﻿@model IEnumerable<WebApplication1.Models.Order>
+
+@{
+    ViewBag.Title = "OrderList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Danh sách đơn hàng</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã đơn hàng</th>
+            <th>Người dùng</th>
+            <th>Ngày đặt hàng</th>
+            <th>Tổng tiền</th>
+            <th>Địa chỉ giao hàng</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderID</td>
+                <td>@order.AspNetUser.Email</td>
+                <td>@(order.OrderDate.HasValue ? order.OrderDate.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</td>
+                <td>@order.TotalAmount.ToString("N0") đ</td>
+                <td>@order.ShippingAddress</td>
+                <td>
+                    <form action="@Url.Action("UpdateStatus", "Orders")" method="post">
+                        <input type="hidden" name="orderId" value="@order.OrderID" />
+                        <select name="status" class="form-select" onchange="this.form.submit()">
+                            <option value="Pending" @(order.Status == "Pending" ? "selected" : "")>Pending</option>
+                            <option value="Shipped" @(order.Status == "Shipped" ? "selected" : "")>Shipped</option>
+                            <option value="Completed" @(order.Status == "Completed" ? "selected" : "")>Completed</option>
+                            <option value="Cancelled" @(order.Status == "Cancelled" ? "selected" : "")>Cancelled</option>
+                        </select>
+                    </form>
+                </td>
+                <td>
+                    @Html.ActionLink("Chi tiết", "Details", new { id = order.OrderID }, new { @class = "btn btn-info btn-sm" })
+                    @if (User.IsInRole("SupperAdmin"))
+                    {
+                        @Html.ActionLink("Xóa", "Delete", new { id = order.OrderID }, new { @class = "btn btn-danger btn-sm" })
+                    }
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

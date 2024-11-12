@@ -1,0 +1,33 @@
+﻿@model IEnumerable<WebApplication1.Models.Book>
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Books in @ViewBag.CategoryName</h2>
+
+@if (Model.Any())
+{
+    <ul>
+        @foreach (var book in Model)
+        {
+            <li>
+                <a href="@Url.Action("Details", "Books", new { id = book.BookID })">
+                    <strong>@book.Title</strong>
+                </a>
+                - @book.Author - @String.Format("{0:C}", book.Price)
+                <br />
+                @Html.DisplayFor(modelItem => book.Description)
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No books available in this category.</p>
+}
+
+<p>
+    @Html.ActionLink("Back to Categories", "Index", "Categories")
+</p>

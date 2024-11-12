@@ -1,0 +1,126 @@
+﻿@model WebApplication1.Models.Book
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Hiển thị thông báo thành công -->
+@*@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}*@
+
+<div class="container mt-4">
+
+
+    <div class="row">
+        <!-- Phần hình ảnh bên trái -->
+        <div class="col-md-4">
+            <img src="~/Content/images/@Model.ImageURL" alt="@Model.Title" class="img-fluid rounded" />
+        </div>
+
+        <!-- Phần thông tin bên phải -->
+        <div class="col-md-8">
+            <h2>@Model.Title</h2>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-3">Tác giả</dt>
+                <dd class="col-sm-9">@Model.Author</dd>
+
+                <dt class="col-sm-3">Nhà xuất bản</dt>
+                <dd class="col-sm-9">@Model.Publisher</dd>
+
+                <dt class="col-sm-3">Giá</dt>
+                <dd class="col-sm-9">
+                    <span class="text-danger font-weight-bold">@Model.Price.ToString("N0") đ</span>
+                </dd>
+
+                <dt class="col-sm-3">ISBN</dt>
+                <dd class="col-sm-9">@Model.ISBN</dd>
+
+                <dt class="col-sm-3">Tình trạng</dt>
+                <dd class="col-sm-9">
+                    @if (Model.Stock > 0)
+                    {
+                        <span class="text-success">Còn hàng (@Model.Stock)</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Hết hàng</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Thể loại</dt>
+                <dd class="col-sm-9">@(Model.Category != null ? Model.Category.CategoryName : "Không có thể loại")</dd>
+
+                <dt class="col-sm-3">Mô tả</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+            </dl>
+
+            <!-- Các nút thao tác -->
+            <div class="mt-4">
+                <div class="btn-group">
+                    @if (Model.Stock > 0)
+                    {
+                        @Html.ActionLink("Thêm vào giỏ", "AddToCart", "Carts", new { bookId = Model.BookID }, new { @class = "btn btn-outline-primary" })
+                        @Html.ActionLink("Mua ngay", "BuyNow", "Carts", new { bookId = Model.BookID }, new { @class = "btn btn-primary" })
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary" disabled>Hết hàng</button>
+                    }
+
+                    @if (User.IsInRole("SupperAdmin") || User.IsInRole("Editor"))
+                    {
+                        @Html.ActionLink("Sửa", "Edit", new { id = Model.BookID }, new { @class = "btn btn-warning" })
+                        @Html.ActionLink("Xóa", "Delete", new { id = Model.BookID }, new { @class = "btn btn-danger", onclick = "return confirm('Bạn có chắc chắn muốn xóa sách này?');" })
+                    }
+                        @*@Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-secondary" })*@
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn {
+        margin-right: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+    dt {
+        font-weight: bold;
+    }
+
+    .img-fluid {
+        max-height: 400px;
+        object-fit: contain;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .text-danger {
+        font-size: 1.2em;
+    }
+
+    .alert {
+        margin-bottom: 20px;
+    }
+
+    .btn-group {
+        flex-wrap: wrap;
+    }
+
+        .btn-group .btn {
+            margin-bottom: 10px;
+        }
+</style>
+
+

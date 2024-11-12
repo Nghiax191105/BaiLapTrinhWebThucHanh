@@ -1,0 +1,102 @@
+﻿@model WebApplication1.Models.Cart
+
+@{
+    ViewBag.Title = "Giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h2>Giỏ hàng của bạn</h2>
+
+    @if (Model.CartDetails == null || !Model.CartDetails.Any())
+    {
+        <div class="alert alert-info">
+            Giỏ hàng của bạn đang trống
+        </div>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sách</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{decimal totalAmount = 0;}
+                @foreach (var item in Model.CartDetails)
+                {
+                    var itemTotal = item.Book.Price * item.Quantity;
+                    totalAmount += itemTotal;
+
+                    <tr>
+                        <td>@item.Book.Title</td>
+                        <td>@item.Book.Price.ToString("N0") đ</td>
+                        <td>
+                            @using (Html.BeginForm("UpdateQuantity", "Carts", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("bookId", item.BookID)
+                                <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control" style="width: 60px; display: inline;">
+                                <input type="submit" value="Cập nhật" class="btn btn-sm btn-primary">
+                            }
+                        </td>
+                        <td>@itemTotal.ToString("N0") đ</td>
+                        <td>
+                            @using (Html.BeginForm("RemoveFromCart", "Carts", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("bookId", item.BookID)
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                    Xóa
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right"><strong>Tổng tiền:</strong></td>
+                    <td colspan="2"><strong>@totalAmount.ToString("N0") đ</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+
+    <div class="form-group">
+        <h4>Địa chỉ giao hàng</h4>
+
+        <!-- Form cập nhật địa chỉ giao hàng -->
+        <div id="shippingAddressContainer">
+            @using (Html.BeginForm("TemporaryShippingAddress", "Carts", FormMethod.Post, new { @id = "shippingAddressForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <label for="shippingAddress">Nhập địa chỉ giao hàng:</label>
+                <input type="text" name="shippingAddress" id="shippingAddress" class="form-control" required value="@TempData["ShippingAddress"]" />
+                <button type="submit" class="btn btn-primary mt-2">Cập nhật</button>
+            }
+
+            <!-- Hiển thị địa chỉ cập nhật ngay kế bên và giữ TempData -->
+            @if (!string.IsNullOrEmpty(TempData["ShippingAddress"] as string))
+            {
+                <p class="mt-3"><strong>Địa chỉ đã nhập:</strong> @TempData["ShippingAddress"]</p>
+
+                {
+                    TempData.Keep("ShippingAddress");
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Nút thanh toán -->
+    @using (Html.BeginForm("Checkout", "Carts", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-success">Tiến hành đặt hàng</button>
+    }
+</div>

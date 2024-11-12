@@ -1,0 +1,190 @@
+﻿@model WebApplication1.Models.IndexViewModel
+@{
+    ViewBag.Title = "Thông tin cá nhân";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+    <main aria-labelledby="title" class="p-4 rounded shadow-sm bg-light" style="width: 100%; max-width: 600px;">
+        <h2 id="title" class="text-center mb-4">@ViewBag.Title</h2>
+
+        @if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+        {
+            <div class="alert alert-success text-center">
+                <i class="fas fa-check-circle"></i> @ViewBag.StatusMessage
+            </div>
+        }
+
+        <h4 class="text-secondary">Cài đặt tài khoản</h4>
+        <hr class="mb-4" />
+
+        <dl class="row mb-3">
+            <!-- Username Section -->
+            <dt class="col-sm-4 text-truncate">Tên người dùng:</dt>
+            <dd class="col-sm-8">
+                <div>
+                    <strong>@Model.UserName</strong>
+                </div>
+                <a href="@Url.Action("UpdateUserName")" class="btn btn-sm btn-outline-secondary mt-2">
+                    <i class="fas fa-edit"></i> Cập nhật
+                </a>
+            </dd>
+
+            <!-- Email Section -->
+            <dt class="col-sm-4 text-truncate">Email:</dt>
+            <dd class="col-sm-8">
+                <div>
+                    <strong>@(Model.Email ?? "Không có")</strong>
+                </div>
+                <a href="@Url.Action("UpdateEmail")" class="btn btn-sm btn-outline-secondary mt-2">
+                    <i class="fas fa-envelope"></i> Cập nhật
+                </a>
+            </dd>
+
+            <!-- Password Section -->
+            <dt class="col-sm-4 text-truncate">Mật khẩu:</dt>
+            <dd class="col-sm-8">
+                <div class="d-inline-block">
+                    @if (Model.HasPassword)
+                    {
+                        <a href="@Url.Action("ChangePassword")" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-key"></i> Thay đổi mật khẩu
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("SetPassword")" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-lock"></i> Tạo mật khẩu
+                        </a>
+                    }
+                </div>
+            </dd>
+
+            <!-- Phone Number Section -->
+            <dt class="col-sm-4 text-truncate">Số điện thoại:</dt>
+            <dd class="col-sm-8">
+                <div>
+                    <strong>@(Model.PhoneNumber ?? "Không có")</strong>
+                </div>
+                @if (Model.PhoneNumber != null)
+                {
+                    <div class="mt-2">
+                        <a href="@Url.Action("AddPhoneNumber")" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Thay đổi
+                        </a>
+                        @using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { role = "form", @class = "d-inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-link text-danger p-0 ms-2">
+                                <i class="fas fa-trash-alt"></i> Xóa
+                            </button>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="mt-2">
+                        <a href="@Url.Action("AddPhoneNumber")" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-plus"></i> Thêm
+                        </a>
+                    </div>
+                }
+            </dd>
+
+            <!-- Two-Factor Authentication Section -->
+            <dt class="col-sm-4 text-truncate">Xác thực hai yếu tố:</dt>
+            <dd class="col-sm-8">
+                @if (Model.TwoFactor)
+                {
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-success">Đã bật</span>
+                        @using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { role = "form", @class = "d-inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-link text-danger p-0 ms-2">
+                                <i class="fas fa-toggle-off"></i> Tắt
+                            </button>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-secondary">Đã tắt</span>
+                        @using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { role = "form", @class = "d-inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-link text-primary p-0 ms-2">
+                                <i class="fas fa-toggle-on"></i> Bật
+                            </button>
+                        }
+                    </div>
+                }
+            </dd>
+        </dl>
+    </main>
+</div>
+
+
+<style>
+    /* Nền trang và căn chỉnh */
+    body {
+        background-color: #f5f5f5;
+    }
+
+    /* Container chính */
+    main {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Tiêu đề */
+    h2 {
+        color: #343a40;
+        font-weight: bold;
+    }
+
+    h4 {
+        color: #6c757d;
+        font-weight: normal;
+    }
+
+    /* Căn chỉnh các cặp nhãn và giá trị trong dl */
+    dt, dd {
+        font-size: 16px;
+    }
+
+    /* Style cho badge */
+    .badge {
+        font-size: 14px;
+        padding: 0.4em 0.6em;
+    }
+
+    /* Style cho các nút */
+    .btn-outline-primary {
+        color: #007bff;
+        border-color: #007bff;
+        font-size: 14px;
+    }
+
+    .btn-outline-secondary {
+        color: #6c757d;
+        border-color: #6c757d;
+        font-size: 14px;
+    }
+
+    .btn-link {
+        font-size: 14px;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+        .btn-link.text-danger {
+            color: #dc3545;
+        }
+
+        .btn-link.text-primary {
+            color: #007bff;
+        }
+</style>

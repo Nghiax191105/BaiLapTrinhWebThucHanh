@@ -1,0 +1,157 @@
+﻿@using WebApplication1.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title.</h2>
+    <div class="row">
+        <div class="col-md-8">
+            <section id="loginForm">
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <h4>Sử dụng một tài khoản để đăng nhập.</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="row">
+                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
+                        <div class="col-md-10">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="offset-md-2 col-md-10">
+                            <div class="checkbox">
+                                @Html.CheckBoxFor(m => m.RememberMe)
+                                @Html.LabelFor(m => m.RememberMe)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="offset-md-2 col-md-10">
+                            <input type="submit" value="Log in" class="btn btn-outline-dark" />
+                        </div>
+                    </div>
+                    <p>
+                        @Html.ActionLink("Đăng ký", "Register")
+                    </p>
+              
+                        <p>
+                            @Html.ActionLink("Quên mật khẩu", "ForgotPassword")
+                        </p>
+                }
+            </section>
+        </div>
+        @*<div class="col-md-4">
+            <section id="socialLoginForm">
+                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+            </section>
+        </div>*@
+    </div>
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<style>
+    /* Căn chỉnh lại toàn bộ container */
+    main {
+        margin-top: 40px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Tiêu đề và nội dung */
+    h2 {
+        color: #343a40;
+        font-weight: bold;
+    }
+
+    h4 {
+        color: #6c757d;
+    }
+
+    /* Định dạng các trường nhập liệu */
+    .form-control {
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        padding: 10px;
+        font-size: 16px;
+        transition: border-color 0.2s ease-in-out;
+    }
+
+        /* Thêm hiệu ứng hover cho các trường nhập liệu */
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+    /* Style cho nút Đăng nhập */
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: 500;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-outline-dark {
+        color: #343a40;
+        border: 1px solid #343a40;
+    }
+
+        .btn-outline-dark:hover {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+    /* Căn chỉnh các dòng và khoảng cách */
+    .row {
+        margin-bottom: 15px;
+    }
+
+    /* Style cho checkbox */
+    .checkbox .form-check-input {
+        margin-right: 5px;
+        transform: scale(1.2);
+    }
+
+    /* Style cho liên kết */
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+    /* Style cho phần social login */
+    #socialLoginForm {
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+        #socialLoginForm h4 {
+            font-weight: bold;
+            color: #495057;
+        }
+
+</style>

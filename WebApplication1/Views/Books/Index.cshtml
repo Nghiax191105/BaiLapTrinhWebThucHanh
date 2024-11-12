@@ -1,0 +1,657 @@
+﻿@model IEnumerable<WebApplication1.Models.Book>
+@using PagedList.Mvc;
+@using PagedList;
+
+
+@{
+    ViewBag.Title = "Danh sách sách";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<!-- Form tìm kiếm và lọc -->
+<div class="container-fluid py-4">
+    <div class="d-flex gap-4">
+        @if (!ViewBag.HasPaging)
+        {
+            <!-- Sidebar được cải thiện -->
+            <div class="filter-sidebar" style="width: 280px; background-color: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 15px rgba(0,0,0,0.05);">
+                <h5 class="mb-4" style="font-weight: 600; color: #2c3e50;">Danh mục sách</h5>
+                <div class="list-group">
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <a href="@Url.Action("Index", "Books", new { categoryId = category.CategoryID })"
+                           class="list-group-item list-group-item-action border-0 mb-2 @(ViewBag.CurrentCategory == category.CategoryID ? "active" : "")"
+                           style="border-radius: 8px; transition: all 0.3s ease;">
+                            <i class="fas fa-book-open me-2"></i>
+                            @category.CategoryName
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Dropdown được cải thiện -->
+            using (Html.BeginForm("Index", "Books", FormMethod.Get))
+            {
+                <div class="mb-4" style="min-width: 280px;">
+                    <select name="categoryId" class="form-select form-select-lg shadow-sm"
+                            style="border-radius: 8px; height: 50px; width: 100%;"
+                            onchange="this.form.submit()">
+                        <option value="">Tất cả danh mục</option>
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.CategoryID" @(ViewBag.CurrentCategory == category.CategoryID ? "selected" : "")>
+                                @category.CategoryName
+                            </option>
+                        }
+                    </select>
+                </div>
+            }
+        }
+
+        <div class="flex-grow-1">
+            <!-- Search bar được cải thiện -->
+            <div class="flex-grow-1">
+                @using (Html.BeginForm("Index", "Books", FormMethod.Get, new { id = "searchForm" }))
+                {
+                    <div class="mb-4 d-flex align-items-center">
+
+                        <div class="input-group input-group-lg shadow-sm">
+                            <input type="text"
+                                   name="searchString"
+                                   value="@ViewBag.CurrentSearch"
+                                   class="form-control"
+                                   style="border-radius: 8px 0 0 8px;"
+                                   placeholder="Tìm kiếm sách..." />
+                            <button type="submit" class="btn btn-primary px-4"
+                                    style="border-radius: 0 8px 8px 0;">
+                                <i class="fas fa-search"></i> Tìm kiếm
+                            </button>
+                        </div>
+
+                        @if (ViewBag.CurrentCategory != null && ViewBag.CurrentCategory != 0)
+                        {
+                            <div class="col-lg-3">
+                                <div class="d-flex align-items-center">
+                                    <span class="me-3 text-muted">Sắp xếp:</span>
+                                    @Html.ActionLink("Tên", "Index",
+                                        new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentSearch, categoryId = ViewBag.CurrentCategory },
+                                        new { @class = "btn btn-outline-secondary" })
+                                    @Html.ActionLink("Giá", "Index",
+                                        new { sortOrder = ViewBag.PriceSortParm, currentFilter = ViewBag.CurrentSearch, categoryId = ViewBag.CurrentCategory },
+                                        new { @class = "btn btn-outline-secondary" })
+                                </div>
+                            </div>
+                        }
+                        <div class="ms-3" style="white-space: nowrap;">
+                            <i class="fas fa-phone-alt"></i> Tư vấn bán hàng 1900xxxx
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (!ViewBag.HasPaging)
+            {
+                <!-- Carousel được cải thiện -->
+                <div class="carousel-container shadow"
+                     style="border-radius: 12px; overflow: hidden; margin-bottom: 30px;">
+                    <div id="bookCarousel" class="carousel">
+                        @for (int i = 0; i < Model.Count(); i++)
+                        {
+                            var item = Model.ElementAt(i);
+                            <div class="carousel-cell text-center" style="width: 100%; max-width: 100%;">
+                                <a href="@Url.Action("Details", "Books", new { id = item.BookID })">
+                                    <!-- Kiểm tra và chỉ định ảnh cụ thể cho sách -->
+                                    @if (item.BookID == 1)
+                                    {
+                                        <img src="~/Content/images/18.jpg" class="d-block w-100" alt="@item.Title" style="height: 400px; object-fit: cover;">
+                                    }
+                                    else if (item.BookID == 2)
+                                    {
+                                        <img src="~/Content/images/9.jpg" class="d-block w-100" alt="@item.Title" style="height: 400px; object-fit: cover;">
+                                    }
+                                    else if (item.BookID == 3)
+                                    {
+                                        <img src="~/Content/images/7.jpg" class="d-block w-100" alt="@item.Title" style="height: 400px; object-fit: cover;">
+                                    }
+                                    else if (item.BookID == 3)
+                                    {
+                                        <img src="~/Content/images/17.jpg" class="d-block w-100" alt="@item.Title" style="height: 400px; object-fit: cover;">
+                                    }
+                                    else if (item.BookID == 3)
+                                    {
+                                        <img src="~/Content/images/14.jpg" class="d-block w-100" alt="@item.Title" style="height: 400px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <!-- Sử dụng ảnh từ Model nếu không có ảnh cụ thể -->
+                                        <img src="~/Content/images/@item.ImageURL" class="d-block w-100" alt="@item.Title" style="height: 400px; object-fit: cover;">
+                                    }
+                                </a>
+
+                            </div>
+                        }
+                    </div>
+                </div>
+                <section style="padding: 0; background-color: #f8f6f1;">
+                    <div class="container">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <a href="/Books/Details/17">
+                                    <img src="~/Content/images/17.jpg" alt="Banner 1" style="width: 100%; height: 250px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); object-fit: cover;">
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="/Books/Details/18">
+                                    <img src="~/Content/images/18.jpg" alt="Banner 2" style="width: 100%; height: 250px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); object-fit: cover;">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var bookCarousel = document.getElementById('bookCarousel');
+                    new Flickity(bookCarousel, {
+                        cellAlign: 'center',
+                        contain: true,
+                        pageDots: true,
+                        prevNextButtons: true,
+                        groupCells: false,  // Số lượng cuốn sách hiển thị mỗi lần, có thể thay đổi nếu muốn nhiều cuốn hơn mỗi slide
+                        wrapAround: true, // Kích hoạt chuyển động lặp
+                        autoPlay: 3000 // Tự động chuyển slide mỗi 3 giây
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
+
+
+@if (User.IsInRole("SupperAdmin") || User.IsInRole("Editor"))
+{
+    <p>
+        @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-success mb-3" })
+    </p>
+}
+
+
+<!--<div class="container">
+    <div class="row">
+        <div class="inner-content">
+            <div class="logo-wrap">
+                <div class="grid">
+                    <a href="#"><img src="~/Content/images/1.jpg" alt="client"></a>
+                    <a href="#"><img src="~/Content/images/1.jpg" alt="client"></a>
+
+                </div>
+            </div>-->
+<!--image-holder-->
+<!--</div>
+    </div>
+</div>-->
+
+
+
+@if (!ViewBag.HasPaging)
+{
+    <section style="padding: 40px; background-color: #f8f6f1; margin-bottom: 40px; margin-top: 100px">
+        <style>
+            .book-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+
+            .book-item {
+                background-color: #fff;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+
+            .book-image {
+                flex-shrink: 0;
+            }
+
+                .book-image img {
+                    width: 100%;
+                    height: 250px;
+                    border-radius: 4px;
+                    object-fit: cover;
+                }
+
+            .book-info {
+                margin-top: 10px;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+            }
+
+                .book-info h4 {
+                    font-size: 1em;
+                    font-weight: bold;
+                    margin: 0;
+                }
+
+                .book-info p {
+                    margin: 5px 0;
+                }
+
+                .book-info .price-current {
+                    color: #ff0000;
+                    font-weight: bold;
+                }
+
+                .book-info .price-old {
+                    text-decoration: line-through;
+                    color: #999;
+                }
+        </style>
+
+        <div class="book-grid">
+            <div class="container">
+                <h2 style="font-family: 'Lora', serif; font-size: 2em; font-weight: bold; margin-bottom: 20px; color: #333;">
+                    Sách Bán Chạy
+                </h2>
+                <div class="book-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <!-- Book item with link -->
+                    <a href="/Books/Details/18" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/6.jpg" alt="Book 1" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Bố Già</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">200,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">300,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Thêm sách khác với đường dẫn tương tự -->
+                    <a href="/Books/Details/20" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/8.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Trăm Năm Cô Đơn</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">150,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">200,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    
+                    <a href="/Books/Details/35" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/23.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Neuromancer</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">290,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">500,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="/Books/Details/26" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/14.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Tên Của Hoa Hồng</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">180,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">250,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="/Books/Details/33" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/21.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Số Đỏ</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">90,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">180,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="/Books/Details/23" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/11.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Chiến Tranh và Hòa Bình</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">250,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">300,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="/Books/Details/39" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/27.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Bàn Tay Trái Của Bóng Tối</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">290,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">500,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="/Books/Details/47" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/35.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Einstein: Cuộc Đời và Vũ Trụ của Ông</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">220,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">400,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="/Books/Details/53" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/41.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Súng, Vi Trùng và Thép</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">400,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">600,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="/Books/Details/64" style="text-decoration: none; color: inherit;">
+                        <div class="book-item" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                            <div class="book-image">
+                                <img src="~/Content/images/52.jpg" alt="Book 2" style="width: 100%; max-width: 200px; height: 250px; border-radius: 4px;">
+                            </div>
+                            <div class="book-info" style="margin-top: 10px;">
+                                <h4 style="font-size: 1em; font-weight: bold; margin: 0;">Nghĩ Giàu và Làm Giàu</h4>
+                                <p style="color: #ff0000; font-weight: bold; margin: 5px 0;">150,000đ</p>
+                                <p style="text-decoration: line-through; color: #999;">300,000đ</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                </div>
+            </div>
+    </section>
+}
+@if (!ViewBag.HasPaging)
+{
+    <section id="limited-offer" class="padding-large" style="background-image: url('@Url.Content("~/Content/images/62.jpg")'); background-size: cover; background-repeat: no-repeat; background-position: center; width: 100%; height: 100vh; margin-bottom: 100px; margin-top: 100px">
+        <div class="container h-100">
+            <div class="row d-flex align-items-center h-100">
+                <div class="col-md-6 text-center">
+                    <div class="image-holder">
+                        <a href="/Books/Details/54">
+                            <img src="~/Content/images/60.jpg" class="img-fluid" alt="banner">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-5 offset-md-1 mt-5 mt-md-0 text-center text-md-start">
+                    <h2>Ưu đãi đặc biệt. Giảm giá 30% !!!</h2>
+                    <div id="countdown-clock" class="text-dark d-flex align-items-center my-3">
+                        <div class="time d-grid pe-3">
+                            <span class="days fs-1 fw-normal">27</span>
+                            <small>Days</small>
+                        </div>
+                        <span class="fs-1 text-primary">:</span>
+                        <div class="time d-grid pe-3 ps-3">
+                            <span class="hours fs-1 fw-normal">22</span>
+                            <small>Hrs</small>
+                        </div>
+                        <span class="fs-1 text-primary">:</span>
+                        <div class="time d-grid pe-3 ps-3">
+                            <span class="minutes fs-1 fw-normal">31</span>
+                            <small>Min</small>
+                        </div>
+                        <span class="fs-1 text-primary">:</span>
+                        <div class="time d-grid ps-3">
+                            <span class="seconds fs-1 fw-normal">56</span>
+                            <small>Sec</small>
+                        </div>
+                    </div>
+                    <a href="index.html" class="btn mt-3">Shop Collection</a>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@if (!ViewBag.HasPaging)
+{
+    foreach (var category in ((List<WebApplication1.Models.Category>)ViewBag.Categories).Take(5))
+    {
+        <h2>@category.CategoryName</h2>
+        <div class="carousel-container mb-5">
+            <div class="carousel" id="carousel-@category.CategoryID">
+                @{
+                    var booksInCategory = Model.Where(b => b.CategoryID == category.CategoryID).ToList();
+                }
+                @foreach (var item in booksInCategory)
+                {
+                    <div class="carousel-cell text-center">
+                        <a href="@Url.Action("Details", "Books", new { id = item.BookID })">
+                            <img src="~/Content/images/@item.ImageURL" class="d-block w-100" alt="@item.Title" style="height: 300px; object-fit: cover;">
+                        </a>
+                        <div class="mt-2">
+                            <h6>@item.Title</h6>
+                            <p>@item.Price.ToString("N0") đ</p>
+                            @*<div class="action-buttons mt-auto">
+                                    @Html.ActionLink("Chi tiết", "Details", new { id = item.BookID }, new { @class = "btn btn-info btn-sm" })
+                                    @if (User.IsInRole("SupperAdmin") || User.IsInRole("Editor"))
+                                        {
+                                            @Html.ActionLink("Xóa", "Delete", new { id = item.BookID }, new { @class = "btn btn-danger btn-sm" })
+                                        }
+                                    @Html.ActionLink("Mua", "AddToCart", "Carts", new { bookId = item.BookID }, new { @class = "btn btn-primary btn-sm" })
+                                </div>*@
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var carousels = document.querySelectorAll('.carousel');
+            carousels.forEach(function (carousel) {
+                new Flickity(carousel, {
+                    cellAlign: 'left',
+                    contain: true,
+                    pageDots: true,
+                    prevNextButtons: true,
+                    groupCells: 4 // Hiển thị 4 cuốn sách mỗi slide
+                });
+            });
+        });
+    </script>
+}
+
+
+<!-- Hiển thị sách -->
+@if (ViewBag.HasPaging)
+{
+    <div class="book-container d-flex flex-wrap justify-content-center">
+        @foreach (var item in Model)
+        {
+            <div class="book-item text-center m-2 p-2 border rounded d-flex flex-column" style="width: 200px;">
+                <!-- Bọc ảnh trong thẻ a -->
+                <a href="@Url.Action("Details", "Books", new { id = item.BookID })" style="text-decoration: none;">
+                    <img src="~/Content/images/@item.ImageURL" alt="@item.Title" class="book-image" style="cursor: pointer;" />
+                </a>
+
+                <!-- Bọc tên sách trong thẻ a -->
+                <a href="@Url.Action("Details", "Books", new { id = item.BookID })" class="book-title-link">
+                    <p class="book-title mb-2">@Html.DisplayFor(modelItem => item.Title)</p>
+                </a>
+
+                <p class="book-price">@item.Price.ToString("N0") đ</p>
+
+                <div class="action-buttons mt-auto">
+                    @*@Html.ActionLink("Chi tiết", "Details", new { id = item.BookID }, new { @class = "btn btn-info btn-sm" })*@
+                    @*@if (User.IsInRole("SupperAdmin") || User.IsInRole("Editor"))
+                        {
+                            @Html.ActionLink("Xóa", "Delete", new { id = item.BookID }, new { @class = "btn btn-danger btn-sm" })
+                        }
+                        @Html.ActionLink("Mua", "AddToCart", "Carts", new { bookId = item.BookID }, new { @class = "btn btn-primary btn-sm" })*@
+                </div>
+            </div>
+        }
+    </div>
+}
+<!-- Phân trang -->
+<!-- Chỉ hiển thị phân trang khi có điều kiện lọc -->
+@if (ViewBag.HasPaging)
+{
+    @Html.PagedListPager((IPagedList<WebApplication1.Models.Book>)Model, page => Url.Action("Index",
+        new
+            {
+                page,
+            sortOrder = ViewBag.CurrentSort,
+            searchString = ViewBag.CurrentSearch,
+            categoryId = ViewBag.CurrentCategory,
+            min = ViewBag.MinPrice,
+            max = ViewBag.MaxPrice
+        }))
+}
+
+
+
+
+
+@if (!ViewBag.HasPaging)
+{
+    <section style="background-color: #f8f6f1; width: 100%; height: 100vh; padding: 60px 0;">
+        <div class="container h-100">
+            <div class="row align-items-center h-100">
+                <div class="col-md-6">
+                    <h2 style="font-family: 'Georgia', serif; font-size: 2.5em; margin: 0; font-weight: bold; color: #333;">
+                        Subscribe To Our <br> Newsletter
+                    </h2>
+                    <div style="width: 60px; height: 3px; background-color: #b19777; margin-top: 10px;"></div>
+                </div>
+                <div class="col-md-6 mt-4 mt-md-0">
+                    <p style="font-size: 1em; color: #666; line-height: 1.6; margin-bottom: 20px;">
+                        Sed eu feugiat amet, libero ipsum enim pharetra hac dolor sit amet,<br>
+                        consectetur. Elit adipiscing enim<br>
+                        pharetra hac.
+                    </p>
+                    <div style="display: flex; align-items: center;">
+                        <div style="flex: 1; max-width: 300px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">
+                            <input type="text"
+                                   placeholder="Enter your email address here"
+                                   style="width: 100%; border: none; outline: none; background: transparent; font-size: 1em; color: #333;">
+                        </div>
+                        <button style="background: none; border: 2px solid #333; color: #333; font-size: 1em; font-weight: bold; cursor: pointer; display: flex; align-items: center; padding: 5px 15px; margin-left: 10px; border-radius: 5px;">
+                            SEND <i class="fas fa-paper-plane" style="margin-left: 5px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+
+
+
+
+
+    <footer class="py-5">
+        <div class="row">
+            <div class="col-6 col-md-2 mb-3">
+                <h5>Section</h5>
+                <ul class="nav flex-column footer-nav">
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Home</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Features</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Pricing</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">FAQs</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">About</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-md-2 mb-3">
+                <h5>Section</h5>
+                <ul class="nav flex-column footer-nav">
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Home</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Features</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Pricing</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">FAQs</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">About</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-md-2 mb-3">
+                <h5>Section</h5>
+                <ul class="nav flex-column footer-nav">
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Home</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Features</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">Pricing</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">FAQs</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0">About</a></li>
+                </ul>
+            </div>
+
+            @*<div class="col-md-5 offset-md-1 mb-3">
+                    <form>
+                        <h5>Subscribe to our newsletter</h5>
+                        <p>Monthly digest of what's new and exciting from us.</p>
+                        <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+                            <label for="newsletter1" class="visually-hidden">Email address</label>
+                            <input id="newsletter1" type="text" class="form-control" placeholder="Email address">
+                            <button class="btn btn-primary" type="button">Subscribe</button>
+                        </div>
+                    </form>
+                </div>*@
+
+            <div class="col-md-5 offset-md-1 mb-3">
+                <h5>Section</h5>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis sed ptibus liberolectus
+                    nonet psryroin. Amet sed lorem posuere sit iaculis amet, ac urna. Adipiscing fames
+                    semper erat ac in suspendisse iaculis.
+                </p>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+            <p>© 2024 Company, Inc. All rights reserved.</p>
+            <ul class="list-unstyled d-flex">
+                <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
+                <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
+                <li class="ms-3"><a class="link-body-emphasis" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
+            </ul>
+        </div>
+    </footer>
+<style>
+    .footer-nav .nav-link {
+        color: #6c757d; /* Màu xám nhạt */
+        text-decoration: none; /* Xóa gạch chân */
+    }
+
+        .footer-nav .nav-link:hover {
+            color: #0056b3; /* Màu khi hover qua liên kết */
+        }
+</style>

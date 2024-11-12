@@ -1,0 +1,59 @@
+﻿@model WebApplication1.Models.IndexViewModel
+@{
+    ViewBag.Title = "Cập nhật Tên Người Dùng";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+{
+    <p class="alert alert-success">@ViewBag.StatusMessage</p>
+}
+
+@using (Html.BeginForm("UpdateUserName", "Manage", FormMethod.Post, new { id = "updateUserNameForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="newUserName">Tên người dùng mới</label>
+        <input type="text" class="form-control" id="newUserName" name="newUserName" required />
+        <small id="errorMessage" class="text-danger" style="display: none;">Tên người dùng không được chứa ký tự có dấu.</small>
+        <small id="duplicateMessage" class="text-danger" style="display: none;">Tên người dùng đã tồn tại. Vui lòng chọn tên khác.</small>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Cập nhật Tên Người Dùng</button>
+}
+
+<script>
+    document.getElementById("updateUserNameForm").onsubmit = function(event) {
+        var userName = document.getElementById("newUserName").value;
+        var vietnameseDiacriticsPattern = /[àáảãạâầấẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđÀÁẢÃẠÂẦẤẨẪẬĂẰẮẲẴẶÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐ]/;
+
+        // Kiểm tra nếu tên người dùng có chứa dấu tiếng Việt
+        if (vietnameseDiacriticsPattern.test(userName)) {
+            event.preventDefault();
+            document.getElementById("errorMessage").style.display = "block";
+            return; // Ngừng nếu có dấu
+        } else {
+            document.getElementById("errorMessage").style.display = "none";
+        }
+
+        // Kiểm tra trùng lặp tên người dùng bằng Ajax
+        event.preventDefault(); // Ngăn gửi form ngay lập tức
+
+        // Gọi AJAX để kiểm tra trùng lặp
+        $.ajax({
+            url: '@Url.Action("CheckUserNameAvailability", "Manage")',
+            type: 'GET',
+            data: { userName: userName },
+            success: function(response) {
+                if (response.isAvailable) {
+                    // Nếu tên người dùng không bị trùng, gửi form
+                    document.getElementById("duplicateMessage").style.display = "none";
+                    document.getElementById("updateUserNameForm").submit(); // Tiếp tục gửi form
+                } else {
+                    // Hiển thị lỗi nếu tên người dùng bị trùng
+                    document.getElementById("duplicateMessage").style.display = "block";
+                }
+            }
+        });
+    };
+</script>

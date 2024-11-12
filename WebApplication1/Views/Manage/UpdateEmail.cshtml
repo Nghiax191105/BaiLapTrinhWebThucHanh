@@ -1,0 +1,65 @@
+﻿@model WebApplication1.Models.IndexViewModel
+@{
+    ViewBag.Title = "Cập nhật Email";
+}
+
+@*<h2>@ViewBag.Title</h2>
+
+    @if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+    {
+        <p class="alert alert-success">@ViewBag.StatusMessage</p>
+    }
+
+    @using (Html.BeginForm("UpdateEmail", "Manage", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label for="newEmail">Email mới</label>
+            <input type="email" class="form-control" id="newEmail" name="newEmail" required />
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Cập nhật Email</button>
+    }*@
+@if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+{
+    <p class="alert alert-success">@ViewBag.StatusMessage</p>
+}
+
+@using (Html.BeginForm("UpdateEmail", "Manage", FormMethod.Post, new { id = "updateEmailForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="newEmail">Email mới</label>
+        <input type="email" class="form-control" id="newEmail" name="newEmail" required />
+        <small id="duplicateEmailMessage" class="text-danger" style="display: none;">Email đã tồn tại. Vui lòng chọn email khác.</small>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Cập nhật Email</button>
+}
+
+<script>
+    document.getElementById("newEmail").addEventListener("blur", function() {
+        var email = this.value;
+
+        // Gọi Ajax kiểm tra email có tồn tại không
+        $.ajax({
+            url: '@Url.Action("CheckEmailAvailability", "Manage")',
+            type: 'GET',
+            data: { email: email },
+            success: function(response) {
+                if (!response.isAvailable) {
+                    // Hiển thị thông báo lỗi nếu email đã tồn tại
+                    document.getElementById("duplicateEmailMessage").style.display = "block";
+                } else {
+                    // Ẩn thông báo lỗi nếu email chưa tồn tại
+                    document.getElementById("duplicateEmailMessage").style.display = "none";
+                }
+            }
+        });
+    });
+
+    // Ngăn gửi form nếu email trùng lặp
+    document.getElementById("updateEmailForm").onsubmit = function(event) {
+        if (document.getElementById("duplicateEmailMessage").style.display === "block") {
+            event.preventDefault();
+        }
+    };
+</script>

@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link href="~/Content/css/bookstyles.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.2.2/flickity.pkgd.min.js"></script>
+    <style>
+        /* Đổi màu cho tất cả các đường dẫn trong navbar */
+        .navbar .nav-link {
+            color: #333 !important; /* Màu chữ tối để tương phản với màu nền vàng */
+        }
+
+            /* Đổi màu chữ khi hover cho các mục trong navbar */
+            .navbar .nav-link:hover {
+                color: #ff5722 !important; /* Màu cam đậm khi hover */
+            }
+
+        /* Đổi màu cho liên kết Trang chủ */
+        .navbar .navbar-brand {
+            color: #333 !important; /* Màu tối cho Trang chủ */
+        }
+
+            /* Đổi màu khi hover cho liên kết Trang chủ */
+            .navbar .navbar-brand:hover {
+                color: #ff5722 !important; /* Màu cam đậm khi hover */
+            }
+    </style>
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-warning">
+        <div class="container">
+            @Html.ActionLink("Trang chủ", "Index", "Books", new { area = "" }, new { @class = "navbar-brand" })
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        @Html.ActionLink("Giỏ hàng", "Index", "Carts", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Đơn hàng", "Index", "Orders", new { area = "" }, new { @class = "nav-link" })
+                    </li>
+                    @if (User.IsInRole("SupperAdmin"))
+                    {
+                        // SupperAdmin chỉ có thể truy cập trang "Quản lý người dùng"
+                        <li class="nav-item">
+                            @Html.ActionLink("Quản lý người dùng", "Index", "ApplicationUsers", new { area = "Admin" }, new { @class = "nav-link" })
+                        </li>
+                    }
+                    @if (User.IsInRole("SupperAdmin") || User.IsInRole("Editor"))
+                    {
+                        // SupperAdmin và Editor có thể truy cập quản lý danh mục
+                        <li class="nav-item">
+                            @Html.ActionLink("Quản lý danh mục", "Index", "Categories", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                    }
+                    @if (User.IsInRole("SupperAdmin") || User.IsInRole("Sale"))
+                    {
+                        // SupperAdmin và Sale có thể truy cập danh sách đơn hàng
+                        <li class="nav-item">
+                            @Html.ActionLink("Danh sách đơn hàng", "OrderList", "Orders", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                    }
+
+
+
+                </ul>
+                @Html.Partial("_LoginPartial")
+
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        @*Phần hiển thị thông báo*@
+        <div class="notifications mt-3">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+
+        <!-- Nội dung chính -->
+        <div class="container body-content mt-4">
+            @RenderBody()
+        </div>
+            <!-- Footer -->
+            <footer class="text-center mt-4">
+                <hr />
+
+            </footer>
+        </div>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+
+        @*Script xử lý ẩn thông báo và dropdown*@
+        <script>
+            $(document).ready(function () {
+                // Tự động ẩn thông báo sau 3 giây
+                setTimeout(function () {
+                    $('.alert').fadeOut('slow', function () {
+                        $(this).remove();
+                    });
+                }, 3000);
+
+                // Xử lý nút close của alert
+                $('.alert .btn-close').click(function () {
+                    $(this).closest('.alert').fadeOut('slow', function () {
+                        $(this).remove();
+                    });
+                });
+
+                // Kích hoạt dropdown bootstrap
+                var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+                var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+                    return new bootstrap.Dropdown(dropdownToggleEl)
+                });
+            });
+        </script>
+
+        @RenderSection("scripts", required: false)
+</body>
+</html>
